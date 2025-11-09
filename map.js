@@ -19,7 +19,7 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', async () => {
-  // Add Boston bike lane data
+  // --- Add Boston bike lanes ---
   map.addSource('boston_route', {
     type: 'geojson',
     data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
@@ -35,54 +35,14 @@ map.on('load', async () => {
       'line-opacity': 0.4,
     },
   });
-});
 
-function getCoords(station) {
-  const point = new mapboxgl.LngLat(+station.Long, +station.Lat);
-  const { x, y } = map.project(point);
-  return { cx: x, cy: y };
-}
-const svg = d3.select('#map').select('svg');
-
-  let stations = [];
-
+  // --- Step 3.1: Fetch Bluebikes station data ---
+  let jsonData;
   try {
-    // Fetch the Bluebikes station JSON data
-    const jsonData = await d3.json(INPUT_BLUEBIKES_CSV_URL);
+    const jsonurl = INPUT_BLUEBIKES_CSV_URL;
+    jsonData = await d3.json(jsonurl);
     console.log('Loaded JSON Data:', jsonData);
-
-    // Access the stations array
-    stations = jsonData.data.stations;
-    console.log('Stations Array:', stations);
   } catch (error) {
     console.error('Error loading JSON:', error);
   }
-
-  // Append circles for each station
-  const circles = svg
-    .selectAll('circle')
-    .data(stations)
-    .enter()
-    .append('circle')
-    .attr('r', 5)
-    .attr('fill', 'steelblue')
-    .attr('stroke', 'white')
-    .attr('stroke-width', 1)
-    .attr('opacity', 0.8);
-
-  // Function to update circle positions
-  function updatePositions() {
-    circles
-      .attr('cx', (d) => getCoords(d).cx)
-      .attr('cy', (d) => getCoords(d).cy);
-  }
-
-  // Initial positioning
-  updatePositions();
-
-  // Update positions when the map moves/zooms/resizes
-  map.on('move', updatePositions);
-  map.on('zoom', updatePositions);
-  map.on('resize', updatePositions);
-  map.on('moveend', updatePositions);
-  
+});
