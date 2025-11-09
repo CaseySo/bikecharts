@@ -1,7 +1,6 @@
 import mapboxgl from 'https://cdn.jsdelivr.net/npm/mapbox-gl@2.15.0/+esm';
 import * as d3 from 'https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm';
 
-// --- Helper functions ---
 function formatTime(minutes) {
   const date = new Date(0, 0, 0, 0, minutes);
   return date.toLocaleString('en-US', { timeStyle: 'short' });
@@ -34,7 +33,6 @@ function filterTripsByTime(trips, timeFilter) {
   });
 }
 
-// --- Map setup ---
 mapboxgl.accessToken = 'pk.eyJ1IjoiZXRoYW5ubGFtIiwiYSI6ImNtN2Nua3pqZjBsMG0ybG9kdTB6aTd4NHEifQ.6aRVlU8cZGC7dg822z4A_Q';
 const map = new mapboxgl.Map({
   container: 'map',
@@ -44,7 +42,6 @@ const map = new mapboxgl.Map({
 });
 
 map.on('load', async () => {
-  // --- Add bike lane layers ---
   map.addSource('boston_route', {
     type: 'geojson',
     data: 'https://bostonopendata-boston.opendata.arcgis.com/datasets/boston::existing-bike-network-2022.geojson',
@@ -67,21 +64,17 @@ map.on('load', async () => {
     paint: { 'line-color': '#32D400', 'line-width': 4, 'line-opacity': 0.6 },
   });
 
-  // --- Load station data ---
   const jsonData = await d3.json('https://dsc106.com/labs/lab07/data/bluebikes-stations.json');
   let stations = jsonData.data?.stations || jsonData.stations;
 
-  // --- Load trips and parse time ---
   const trips = await d3.csv('https://dsc106.com/labs/lab07/data/bluebikes-traffic-2024-03.csv', d => {
     d.started_at = new Date(d.started_at);
     d.ended_at = new Date(d.ended_at);
     return d;
   });
 
-  // --- Compute traffic initially ---
   stations = computeStationTraffic(stations, trips);
 
-  // --- Create SVG overlay ---
   const svg = d3.select(map.getCanvasContainer())
     .append('svg')
     .attr('width', '100%')
@@ -127,16 +120,14 @@ map.on('load', async () => {
   map.on('move', updatePositions);
   map.on('zoom', updatePositions);
 
-  // --- Time slider logic ---
   const timeSlider = document.getElementById('time-slider');
   const selectedTime = document.getElementById('selected-time');
   const anyTimeLabel = document.getElementById('any-time');
 
-  // initialize slider range and value
   timeSlider.min = -1;
-  timeSlider.max = 1439; // 24 hours * 60 - 1
+  timeSlider.max = 1439; 
   timeSlider.step = 60;
-  timeSlider.value = -1; // start at "any time"
+  timeSlider.value = -1;
 
   function updateScatterPlot(timeFilter) {
     const filteredTrips = filterTripsByTime(trips, timeFilter);
@@ -168,5 +159,5 @@ map.on('load', async () => {
   }
 
   timeSlider.addEventListener('input', updateTimeDisplay);
-  updateTimeDisplay(); // initialize view
+  updateTimeDisplay(); 
 });

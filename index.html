@@ -5,17 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Boston & Cambridge Bike Map</title>
 
-  <!-- Mapbox GL JS -->
   <link
     href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
     rel="stylesheet"
   />
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
 
-  <!-- D3 -->
   <script type="module" src="https://cdn.jsdelivr.net/npm/d3@7.9.0/+esm"></script>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="global.css" />
   <link rel="stylesheet" href="map.css" />
 </head>
@@ -30,19 +27,16 @@
     </label>
   </header>
 
-  <!-- Map container -->
   <div id="map">
     <svg></svg>
   </div>
 
-  <!-- Legend -->
   <div class="legend">
     <div class="legend-color" style="--departure-ratio:1">More departures</div>
     <div class="legend-color" style="--departure-ratio:0.5">Balanced</div>
     <div class="legend-color" style="--departure-ratio:0">More arrivals</div>
   </div>
 
-  <!-- Map JS -->
   <script type="module" src="map.js"></script>
 </body>
 </html>
